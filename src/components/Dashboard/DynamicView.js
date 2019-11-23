@@ -1,6 +1,8 @@
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import '../../index.css';
+import Plot from 'react-plotly.js';
+import ContainerContent from './ContainerContent';
 import React from "react";
 import _ from "lodash";
 import { WidthProvider, Responsive } from "react-grid-layout";
@@ -55,7 +57,28 @@ export default class DynamicView extends React.PureComponent {
             onClick={this.onAddItem}
             title="You can add an item by clicking here, too."
           >
-            Add +
+          <Plot
+            data={[
+                {
+                x: [1,2,3,4,2],
+                type: 'histogram',
+                histnorm: 'percent',
+                autosize: true,
+                marker: {color: 'red'}
+                }
+            ]}
+            config={{
+                responsive: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['toggleSpikelines', 'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d']
+            }}
+            layout={{
+                width: this.props.width,
+                height: this.props.height,
+                xaxis: {visible: true, title: 'Gage'},
+                yaxis: {nticks: 3, ticksuffix: "%"}
+            }}
+            />
           </span>
         ) : (
           <span className="text">{i}</span>
@@ -70,7 +93,6 @@ export default class DynamicView extends React.PureComponent {
       </div>
     );
   }
-
   onAddItem() {
     /*eslint no-console: 0*/
     console.log("adding", "n" + this.state.newCounter);
@@ -106,6 +128,7 @@ export default class DynamicView extends React.PureComponent {
   }
 
   render() {
+    console.log(this.props)
     return (
       <div>
         <button onClick={this.onAddItem}>Add Item</button>
