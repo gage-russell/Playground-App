@@ -52,6 +52,7 @@ export default class DynamicView extends React.PureComponent {
     this.state = {
       items: [0, 1].map(function(i, key, list) {
         return {
+          plot: false,
           i: i.toString(),
           x: i * 2,
           y: 0,
@@ -75,7 +76,7 @@ export default class DynamicView extends React.PureComponent {
       top: 0,
       cursor: "pointer"
     };
-    const i = el.add ? "+" : el.i;
+    const i = el.i;
     return (
       <div key={i} data-grid={el}>
         <span
@@ -83,6 +84,8 @@ export default class DynamicView extends React.PureComponent {
           style={removeStyle}
         >
         <button onClick={this.onRemoveItem.bind(this, i)}>Remove Item</button>
+        <button onClick={this.onRenderPlot.bind(this, i)}>Plot</button>
+        {console.log("items", this.state.items[i])}
         { showPlot() }
         </span>
       </div>
@@ -94,7 +97,8 @@ export default class DynamicView extends React.PureComponent {
     this.setState({
       // Add a new item. It must have a unique key!
       items: this.state.items.concat({
-        i: "n" + this.state.newCounter,
+        plot: false,
+        i: this.state.newCounter,
         x: (this.state.items.length * 2) % (this.state.cols || 12),
         y: Infinity, // puts it at the bottom
         w: 3,
@@ -120,6 +124,13 @@ export default class DynamicView extends React.PureComponent {
   onRemoveItem(i) {
     console.log("removing", i);
     this.setState({ items: _.reject(this.state.items, { i: i }) });
+  }
+
+  onRenderPlot(i) {
+    const newItems = this.state.items.slice() //copy the array
+    newItems[i].plot = true //execute the manipulations
+    this.setState({items: newItems}) //set the new state
+    console.log('Adding Plot to: ', newItems[i])
   }
 
   render() {
