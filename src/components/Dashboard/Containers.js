@@ -8,31 +8,7 @@ import _ from "lodash";
 import { WidthProvider, Responsive } from "react-grid-layout";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-function showPlot(props) {
-  return (
-    <Plot
-      data={[
-          {
-          x: [1,2,3,4,2],
-          type: 'histogram',
-          histnorm: 'percent',
-          marker: {color: 'red'}
-          }
-      ]}
-      config={{
-          responsive: true,
-          displaylogo: false,
-          modeBarButtonsToRemove: ['toggleSpikelines', 'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d']
-      }}
-      layout={{
-          width: 310,
-          height: 200,
-          xaxis: {visible: true},
-          yaxis: {nticks: 3, ticksuffix: "%"}
-      }}
-      />
-  );
-}
+
 
 
 /**
@@ -85,27 +61,28 @@ export default class DynamicView extends React.PureComponent {
         >
         <button onClick={this.onRemoveItem.bind(this, i)}>Remove Item</button>
         <button onClick={this.onRenderPlot.bind(this, i)}>Plot</button>
-        {console.log("items", this.state.items[i])}
-        { showPlot() }
+        {console.log("items", this.state.items[i].plot)}
+        { this.showPlot(i) }
         </span>
       </div>
     );
   }
   onAddItem() {
     /*eslint no-console: 0*/
-    console.log("adding", "n" + this.state.newCounter);
+    console.log("adding", this.state.items.length);
+    let counter = this.state.items.length;
+    console.log("count", counter);
     this.setState({
       // Add a new item. It must have a unique key!
       items: this.state.items.concat({
         plot: false,
-        i: this.state.newCounter,
+        i: counter.toString(),
         x: (this.state.items.length * 2) % (this.state.cols || 12),
         y: Infinity, // puts it at the bottom
         w: 3,
         h: 2.2
       }),
       // Increment the counter to ensure key is always unique.
-      newCounter: this.state.newCounter + 1
     });
   }
 
@@ -119,6 +96,34 @@ export default class DynamicView extends React.PureComponent {
 
   onLayoutChange(layout) {
     this.setState({ layout: layout });
+  }
+
+  showPlot(i) {
+    if (this.state.items[i].plot) {
+      return (
+        <Plot
+          data={[
+              {
+              x: [1,2,3,4,2],
+              type: 'histogram',
+              histnorm: 'percent',
+              marker: {color: 'red'}
+              }
+          ]}
+          config={{
+              responsive: true,
+              displaylogo: false,
+              modeBarButtonsToRemove: ['toggleSpikelines', 'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d']
+          }}
+          layout={{
+              width: 310,
+              height: 200,
+              xaxis: {visible: true},
+              yaxis: {nticks: 3, ticksuffix: "%"}
+          }}
+          />
+      );
+    }
   }
 
   onRemoveItem(i) {
